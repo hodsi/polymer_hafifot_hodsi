@@ -1,0 +1,57 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+
+<dom-module id="shop-app">
+    <template>
+        <style>
+            .wrapper {
+                font-family: sans-serif;
+                background: lightblue;
+                flex: 1;
+            }
+
+            .header {
+                color: green;
+            }
+        </style>
+        <div class="wrapper">
+            <div class="header">
+                {{name}}
+            </div>
+            <div class="content">
+                All products should be here...
+            </div>
+        </div>
+    </template>
+
+    <script>
+        class EpikShopApp extends Polymer.Element {
+            static get is() {
+                return 'shop-app';
+            }
+
+            static get properties() {
+                return {
+                    name: {
+                        type: String
+                    },
+                    products: {
+                        type: Array
+                    }
+                };
+            }
+
+            static get observers() {
+                return [
+                    '_routePageChanged(routeData.page)',
+                ];
+            }
+
+            constructor() {
+                super();
+            }
+        }
+
+        window.customElements.define(EpikShopApp.is, EpikShopApp);
+    </script>
+</dom-module>
