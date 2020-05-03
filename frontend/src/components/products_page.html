@@ -1,0 +1,92 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+
+<dom-module id="products-page">
+    <template>
+        <style>
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+                text-align: center;
+            }
+        </style>
+
+
+        
+        <input type="checkbox" value="{{_shouldSort::checked}}"/> <label>sort</label> <br/>
+        
+        <input type="checkbox" value="{{_sortAscending::checked}}"> <label>sort in acsending order</label> <br/>
+
+        <label>filter: </label> <input type="search" value="{{_filterString::input}}"/>
+        {{_filterString}}
+
+        <table id="products-table">
+            <tr>
+                <th>id</th>
+                <th>name</th>
+                <th>price</th>
+                <th>description</th>
+            </tr>
+            <template
+              is="dom-repeat"
+              as="product"
+              items="{{products}}"
+              sort="{{_sortProducts(products,_filterString)}}"
+              filter="{{_filterProducts(products)}}"
+            >
+                <tr>
+                    <td>{{product.id}}</td>
+                    <td>{{product.name}}</td>
+                    <td>{{product.price}}</td>
+                    <td>{{product.description}}</td>
+                </tr>
+            </template>
+        </table>
+    </template>
+    <script>
+        class ProductsPage extends Polymer.Element {
+            static get is() {
+                return 'products-page';
+            }
+
+            static get properties() {
+                return {
+                    products: {
+                        type: Array,
+                    },
+                    productsUrl: {
+                        type: String,
+                        value: '/api/products',
+                        observer: '_getProducts'
+                    },
+                    _filterString: String,
+                    _shouldSort: Boolean,
+                    _sortAscending: Boolean,
+                };
+            }
+
+            _getProducts() {
+                fetch(this.productsUrl).then(resp => resp.json()).then(data => this.products = data.products);
+            }
+
+            _isSorting() {
+                return this._shouldSort;
+            }
+
+            _sortProducts(products) {
+                return function (firstProduct, secondProduct) {
+                    return (firstProduct.price - secondProduct.price);
+                };
+            }
+
+            _filterProducts(products) {
+                console.log(this, this._filterString);
+                return function (product) {
+                    return true;
+                }
+            }
+        }
+        window.customElements.define(ProductsPage.is, ProductsPage);
+    </script>
+</dom-module>
